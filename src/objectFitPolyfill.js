@@ -1,5 +1,5 @@
 /*----------------------------------------
- * objectFitPolyfill 2.0
+ * objectFitPolyfill 2.0.3
  *
  * Made by Constance Chen
  * Released under the MIT license
@@ -7,34 +7,20 @@
  * https://github.com/constancecchen/object-fit-polyfill
  *--------------------------------------*/
 
-(function (root, factory) {
-  if (typeof define === "function" && define.amd) {
-    // AMD. Register as an anonymous module.
-    define([], function () {
-      return (root.objectFitPolyfill = factory());
-    });
-  } else if (typeof module === "object" && module.exports) {
-    // Node. Does not work with strict CommonJS, but
-    // only CommonJS-like environments that support module.exports,
-    // like Node.
-    module.exports = factory();
-  } else {
-    // Browser globals
-    root.objectFitPolyfill = factory();
-  }
-}(this, function () {
+(function(){
   "use strict";
 
   // If the browser does support object-fit, we don't need to continue
   if ("objectFit" in document.documentElement.style !== false) {
-    return function () { return false };
+    window.objectFitPolyfill = function() { return false };
+    return;
   }
 
   /**
    * Check the container's parent element to make sure it will
    * correctly handle and clip absolutely positioned children
-   * @private
-   * @param $container - parent element
+   *
+   * @param {node} $container - parent element
    */
   var checkParentContainer = function($container) {
     var styles = window.getComputedStyle($container, null);
@@ -57,14 +43,14 @@
       $container.style.height = "100%";
     }
 
-    $container.className = $container.className + " object-fit-polyfill";
+    $container.classList.add("object-fit-polyfill");
   };
 
   /**
    * Check for pre-set max-width/height or min-width/height,
    * which can mess up image calculations
-   * @private
-   * @param $media - img/video element
+   *
+   * @param {node} $media - img/video element
    */
   var checkMediaConstraints = function($media) {
     var styles = window.getComputedStyle($media, null);
@@ -86,10 +72,10 @@
 
   /**
    * Calculate & set object-position
-   * @private
-   * @param axis - string, either "x" or "y"
-   * @param $media - img or video element
-   * @param objectPosition - string, e.g. "50% 50%", "top bottom"
+   *
+   * @param {string} axis - either "x" or "y"
+   * @param {node} $media - img or video element
+   * @param {string} objectPosition - e.g. "50% 50%", "top bottom"
    */
   var setPosition = function(axis, $media, objectPosition) {
     objectPosition = objectPosition.split(" ");
@@ -154,8 +140,8 @@
 
   /**
    * Calculate & set object-fit
-   * @private
-   * @param $media - img/video/picture element
+   *
+   * @param {node} $media - img/video/picture element
    */
   var objectFit = function($media) {
     // Fallbacks, IE 10- data
@@ -216,8 +202,7 @@
   };
 
   /**
-   * Initialize & run plugin
-   * @public
+   * Initialize plugin
    */
   var objectFitPolyfill = function() {
     var media = document.querySelectorAll("[data-object-fit]");
@@ -246,17 +231,17 @@
         }
       }
     }
+
+    return true;
   };
 
-  return objectFitPolyfill;
-
-}));
-
-if (objectFitPolyfill() !== false) {
   document.addEventListener("DOMContentLoaded", function() {
     objectFitPolyfill();
   });
   window.addEventListener("resize", function() {
     objectFitPolyfill();
   });
-}
+
+  window.objectFitPolyfill = objectFitPolyfill;
+
+})();
