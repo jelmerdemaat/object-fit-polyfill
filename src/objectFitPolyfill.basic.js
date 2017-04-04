@@ -143,13 +143,19 @@
     return true;
   };
 
-  document.addEventListener("DOMContentLoaded", function() {
-    objectFitPolyfill();
-  });
-  window.addEventListener("resize", function() {
-    objectFitPolyfill();
-  });
+  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = objectFitPolyfill;
+  }
 
-  window.objectFitPolyfill = objectFitPolyfill;
+  if (window && document) {
+    document.addEventListener("DOMContentLoaded", function() {
+      objectFitPolyfill();
+    });
 
+    window.addEventListener("resize", function() {
+      objectFitPolyfill();
+    });
+
+    window.objectFitPolyfill = objectFitPolyfill;
+  }
 })();

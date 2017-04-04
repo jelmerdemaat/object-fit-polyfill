@@ -204,8 +204,11 @@
   /**
    * Initialize plugin
    */
-  var objectFitPolyfill = function() {
-    var media = document.querySelectorAll("[data-object-fit]");
+  var objectFitPolyfill = function(selector) {
+    var media = selector ?
+                  document.querySelectorAll("[data-object-fit], " + selector)
+                  :
+                  document.querySelectorAll("[data-object-fit]");
 
     for (var i = 0; i < media.length; i ++) {
       var mediaType = media[i].nodeName.toLowerCase();
@@ -235,13 +238,19 @@
     return true;
   };
 
-  document.addEventListener("DOMContentLoaded", function() {
-    objectFitPolyfill();
-  });
-  window.addEventListener("resize", function() {
-    objectFitPolyfill();
-  });
+  if (typeof module !== 'undefined' && typeof module.exports !== 'undefined') {
+    module.exports = objectFitPolyfill;
+  }
 
-  window.objectFitPolyfill = objectFitPolyfill;
+  if (window && document) {
+    document.addEventListener("DOMContentLoaded", function() {
+      objectFitPolyfill();
+    });
 
+    window.addEventListener("resize", function() {
+      objectFitPolyfill();
+    });
+
+    window.objectFitPolyfill = objectFitPolyfill;
+  }
 })();
